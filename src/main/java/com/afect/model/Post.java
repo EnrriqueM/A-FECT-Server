@@ -22,26 +22,26 @@ public class Post {
 	@Id
 	@Column(name="post_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String post_id;
+	private int post_id;
 	
 	@Column(name="post_title", nullable=false)
 	private String title;
 	
-	@Column(name="dateCreated")
-	@CreationTimestamp
-	private LocalDateTime dateCreated;
-	
-	@Column(name="dateUpdated")
-	private LocalDateTime dateUpdated;
-	
 	@Column(name="message", nullable=false)
 	private String message;
 	
-	@Column(name="image")
+	@Column(name="image", nullable=true)
 	private byte[] image;
+	
+	@Column(name="dateCreated", nullable=true)
+	@CreationTimestamp
+	private LocalDateTime dateCreated;
+	
+	@Column(name="dateUpdated", nullable=true)
+	private LocalDateTime dateUpdated;
 
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@JoinColumn(name="User_FK", nullable=false)
+	@JoinColumn(name="user_id")
 	 private User user;
 	
 	public Post() 
@@ -58,8 +58,7 @@ public class Post {
 		this.title = title;
 	}
 
-	public Post(String title, LocalDateTime dateCreated, LocalDateTime dateUpdated, 
-			String message, byte[] image, User user) 
+	public Post(String title, String message, byte[] image, LocalDateTime dateCreated, LocalDateTime dateUpdated, User user) 
 	{
 		super();
 		this.dateCreated = dateCreated;
@@ -70,9 +69,8 @@ public class Post {
 		this.title = title;
 	}
 
-	public Post(String title, String post_id, LocalDateTime dateCreated, 
-			LocalDateTime dateUpdated, String message, byte[] image,
-			User user) 
+	public Post(int post_id, String title, String message, byte[] image, 
+			LocalDateTime dateCreated, LocalDateTime dateUpdated, User user) 
 	{
 		super();
 		this.post_id = post_id;
@@ -84,11 +82,11 @@ public class Post {
 		this.title = title;
 	}
 
-	public String getPost_id() {
+	public int getPost_id() {
 		return post_id;
 	}
 
-	public void setPost_id(String post_id) {
+	public void setPost_id(int post_id) {
 		this.post_id = post_id;
 	}
 
@@ -143,7 +141,7 @@ public class Post {
 	@Override
 	public String toString() {
 		return "Post [post_id=" + post_id + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated
-				+ ", message=" + message + ", image=" + Arrays.toString(image) + ", user=" + user.getUser_id() + "]";
+				+ ", message=" + message  + ", user=" + user.getUsername() + "]";
 	}
 	
 	

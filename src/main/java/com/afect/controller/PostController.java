@@ -39,33 +39,42 @@ public class PostController
 	@PostMapping()
 	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
-		System.out.println(pMap.get("username"));
 		User u = uService.getUserByUsername(pMap.get("username"));
-		System.out.println(u);
 		
 		Post p = new Post(pMap.get("title"), pMap.get("message"), null, u);
 		List<Post> usersPost = u.getPosts();
 		usersPost.add(p);
 		u.setPosts(usersPost);
-		uService.insertUser(u);
 		
-		User u2 = uService.getUserByUsername(pMap.get("username"));
-		List<Post> usersPost2 = u2.getPosts();
-		System.out.println(usersPost2);
+		//Insert to DB
+		uService.insertUser(u);
+		pService.insertPost(p);
 		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<List<Post>> getUserByUserName(@PathVariable("id") String id)
+	@GetMapping("/title/{id}")
+	public ResponseEntity<List<Post>> getUserByTitle(@PathVariable("id") String title)
 	{
-		System.out.println("id: " + id);
-		if (pService.getByTitle(id) == null)
+		System.out.println("id: " + title);
+		if (pService.getByTitle(title) == null)
 		{
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<>(pService.getByTitle(id), HttpStatus.OK);
+		return new ResponseEntity<>(pService.getByTitle(title), HttpStatus.OK);
+	}
+	
+	@GetMapping("/id/{id}")
+	public ResponseEntity<Post> getUserByUserName(@PathVariable("id") int id)
+	{
+		Post p = pService.getById(id);
+		if (p == null)
+		{
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<>(p, HttpStatus.OK);
 	}
 	
 }

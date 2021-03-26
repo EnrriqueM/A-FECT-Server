@@ -3,7 +3,6 @@ package com.afect.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,7 +37,7 @@ public class User
 	private String password;
 	
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
-	private List<Post> posts;
+	private List<Post> posts = new ArrayList<>();
 	
 	//Constructors
 	public User() {
