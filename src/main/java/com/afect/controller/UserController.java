@@ -37,12 +37,15 @@ public class UserController {
 	{
 		User u = new User(uMap.get("username"), uMap.get("password"), uMap.get("email"));
 		
+		uService.insertUser(u);
+		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> getUserByUserName(@PathVariable("username") String un)
 	{
+		System.out.println(un);
 		if (uService.getUserByUsername(un) == null)
 		{
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
