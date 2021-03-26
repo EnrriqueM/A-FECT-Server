@@ -61,4 +61,9 @@ public class UserService
 		userDao.delete(u);
 	}
 	
+	public void updateUser(User u)
+	{
+		userDao.save(u);
+	}
+	
 }

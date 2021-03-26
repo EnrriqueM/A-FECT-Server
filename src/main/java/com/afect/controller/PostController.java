@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,56 +15,57 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.afect.model.Post;
 import com.afect.model.User;
+import com.afect.service.PostService;
 import com.afect.service.UserService;
 
 @RestController
-@RequestMapping(value="/api/user")
-public class UserController {
+@RequestMapping(value="/api/post")
+public class PostController 
+{
+	private PostService pService;
 	private UserService uService;
 	
-	public UserController()
-	{
+	public PostController() {
 		super();
 	}
 
 	@Autowired
-	public UserController(UserService uService) {
+	public PostController(PostService pService, UserService uService) {
 		super();
+		this.pService = pService;
 		this.uService = uService;
 	}
 	
 	@PostMapping()
-	public ResponseEntity<String> insertFood(@RequestBody LinkedHashMap<String, String> uMap)
+	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
-		User u = new User(uMap.get("username"), uMap.get("password"), uMap.get("email"));
+		System.out.println(pMap.get("username"));
+		User u = uService.getUserByUsername(pMap.get("username"));
+		System.out.println(u);
 		
+		Post p = new Post(pMap.get("title"), pMap.get("message"), null, u);
+		List<Post> usersPost = u.getPosts();
+		usersPost.add(p);
+		u.setPosts(usersPost);
 		uService.insertUser(u);
+		
+		User u2 = uService.getUserByUsername(pMap.get("username"));
+		List<Post> usersPost2 = u2.getPosts();
+		System.out.println(usersPost2);
 		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/{username}")
-	public ResponseEntity<List<Post>> getUserByUserName(@PathVariable("username") String un)
+	@GetMapping("/{id}")
+	public ResponseEntity<List<Post>> getUserByUserName(@PathVariable("id") String id)
 	{
-		System.out.println(un);
-		if (uService.getUserByUsername(un) == null)
+		System.out.println("id: " + id);
+		if (pService.getByTitle(id) == null)
 		{
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		
-		System.out.println("Here: " + uService.getUserByUsername(un).getPosts());
-		return new ResponseEntity<>(uService.getUserByUsername(un).getPosts(), HttpStatus.OK);
+		return new ResponseEntity<>(pService.getByTitle(id), HttpStatus.OK);
 	}
-	
-	@DeleteMapping("/{username}")
-	public ResponseEntity<String> deleteUser(@PathVariable("username") String un)
-	{
-		User u = uService.getUserByUsername(un);
-		
-		uService.deleteUser(u);
-		
-		return new ResponseEntity<>("User Deleted", HttpStatus.GONE);
-	}
-	
 	
 }
