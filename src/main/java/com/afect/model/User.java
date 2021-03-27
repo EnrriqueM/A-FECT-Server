@@ -12,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name="af_User")
 public class User 
@@ -37,11 +40,28 @@ public class User
 	private String password;
 	
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+	@JsonIgnore
 	private List<Post> posts = new ArrayList<>();
 	
 	//Constructors
 	public User() {
 		super();
+	}
+	
+	public User(
+			@JsonProperty("firstname") String firstname, 
+			@JsonProperty("lastname") String lastname, 
+			@JsonProperty("username") String username, 
+			@JsonProperty("email") String email, 
+			@JsonProperty("password") String password
+			) 
+	{
+		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.username = username;
+		this.email = email;
+		this.password = password;
 	}
 	
 	public User(String firstname, String lastname, String username, String email, String password, List<Post> posts) {
@@ -52,13 +72,6 @@ public class User
 		this.email = email;
 		this.password = password;
 		this.posts = posts;
-	}
-	
-	public User(String username, String password, String email) {
-		super();
-		this.username = username;
-		this.email = email;
-		this.password = password;
 	}
 	
 	public User(int user_id, String firstname, String lastname, String username, String email, String password, List<Post> posts) {

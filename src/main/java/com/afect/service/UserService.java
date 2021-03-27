@@ -1,6 +1,7 @@
 package com.afect.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,13 @@ public class UserService
 	public List<User> getUserByFirstname(String name)
 	{
 		return userDao.findByFirstname(name);
+	}
+	
+	public User getUserById(int id)
+	{
+		Optional<User> u = userDao.findById(id);
+		
+		return u.get();
 	}
 	
 	public User getUsernameAndPassword(String un, String pwd)

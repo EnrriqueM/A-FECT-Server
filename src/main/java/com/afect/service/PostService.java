@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.afect.model.Post;
+import com.afect.model.User;
 import com.afect.repository.PostDao;
 
 @Service
@@ -40,10 +41,10 @@ public class PostService
 		return pDao.findAll();
 	}
 	
-	/*public List<Post> getByUserId(int user_id)
+	public List<Post> getByUserId(User user_id)
 	{
-		return pDao.findByUserId(user_id);
-	}*/
+		return pDao.findByUser(user_id);
+	}
 	
 	public List<Post> getByTitle(String title)
 	{

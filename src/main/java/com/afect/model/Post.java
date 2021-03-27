@@ -1,7 +1,6 @@
 package com.afect.model;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name="af_Post")
@@ -30,14 +30,15 @@ public class Post {
 	@Column(name="message", nullable=false)
 	private String message;
 	
-	@Column(name="image", nullable=true)
+	@Column(name="image")
 	private byte[] image;
 	
-	@Column(name="dateCreated", nullable=true)
+	@Column(name="dateCreated", nullable=false)
 	@CreationTimestamp
 	private LocalDateTime dateCreated;
 	
-	@Column(name="dateUpdated", nullable=true)
+	@Column(name="dateUpdated")
+	@UpdateTimestamp
 	private LocalDateTime dateUpdated;
 
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
