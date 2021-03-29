@@ -1,6 +1,5 @@
 package com.afect.controller;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +36,56 @@ public class UserController {
 		this.uService = uService;
 	}
 	
+	@PostMapping("/checkEmail/{email}")
+	public ResponseEntity<String> checkEmail(@PathVariable("email") String email)
+	{
+		//set email to lower case
+		email = email.toLowerCase();
+		//If no user is found, then email is available
+		if(uService.getUserByEmail(email) == null)
+		{
+			return new ResponseEntity<String>("Email is available", HttpStatus.OK);
+		}
+		
+		//Email is taken
+		return new ResponseEntity<String>("Email is taken", HttpStatus.FOUND);
+	}
+	
+	@PostMapping("/checkUsername/{un}")
+	public ResponseEntity<String> checkUsername(@PathVariable("un") String un)
+	{
+		//If no user is found, then email is available
+		if(uService.getUserByUsername(un) == null)
+		{
+			return new ResponseEntity<String>("un is available", HttpStatus.OK);
+		}
+		
+		//Email is taken
+		return new ResponseEntity<String>("Email is taken", HttpStatus.FOUND);
+	}
+	
+	/*
+	 * Attempt to register a user
+	 * */
 	@PostMapping
 	public ResponseEntity<String> addUser(@RequestBody User u)
 	{
-		//User u = new User(uMap.get("username"), uMap.get("password"), uMap.get("email"));
+		//Set email to lower case
+		u.setEmail(u.getEmail().toLowerCase());
+		//First try and find this user by email
+		if(!(uService.getUserByEmail(u.getEmail()) == null))
+		{
+			System.out.println("User email already exists");
+			return new ResponseEntity<String>("Failed to create user", HttpStatus.BAD_REQUEST);
+		}
+		//Try and find by username
+		else if(!(uService.getUserByEmail(u.getUsername()) == null))
+		{
+			System.out.println("Username already exists");
+			return new ResponseEntity<String>("Failed to create user", HttpStatus.BAD_REQUEST);
+		}
+		
+		//Create the new user
 		try
 		{
 			uService.insertUser(u);
@@ -48,7 +93,7 @@ public class UserController {
 		catch(Exception e)
 		{
 			System.out.print(e.getMessage());
-			return new ResponseEntity<String>("Failed ot create user", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("Failed to create user", HttpStatus.BAD_REQUEST);
 		}
 		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);

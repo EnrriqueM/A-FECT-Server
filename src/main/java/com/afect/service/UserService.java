@@ -64,6 +64,11 @@ public class UserService
 		return userDao.findByUsernameAndPassword(un, pwd);
 	}
 	
+	public User getUserByEmail(String email)
+	{
+		return userDao.findByEmail(email);
+	}
+	
 	public void deleteUser(User u)
 	{
 		userDao.delete(u);
