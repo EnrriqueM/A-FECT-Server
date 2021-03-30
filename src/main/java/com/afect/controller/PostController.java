@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import com.afect.service.UserService;
 
 @RestController
 @RequestMapping(value="/api/post")
+@CrossOrigin(origins = "*")
 public class PostController 
 {
 	private PostService pService;
@@ -36,9 +38,11 @@ public class PostController
 		this.uService = uService;
 	}
 	
-	@PostMapping()
+	@PostMapping("/addpost")
 	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
+		System.out.println("in new post");
+		System.out.println(pMap);
 		User u = uService.getUserById(Integer.parseInt(pMap.get("userId")));
 		
 		Post p = new Post(pMap.get("title"), pMap.get("message"), null, u);
