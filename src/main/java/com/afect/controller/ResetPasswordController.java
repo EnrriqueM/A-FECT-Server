@@ -8,20 +8,18 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.afect.model.User;
+import com.afect.model.EmailToken;
 import com.afect.service.EmailTokenService;
 
 import net.bytebuddy.utility.RandomString;
@@ -51,18 +49,23 @@ public class ResetPasswordController {
 	@PostMapping("/forgot_password/{email}")
     public ResponseEntity<String> processForgotPassword(HttpServletRequest request, @PathVariable("email")  String email)
 	{
+		//Create a random string of characters to be a "token"
 	    String token = RandomString.make(30);
-	    
-	    System.out.println("RECIEVEC: " + email + " Token: " + token);
 	     
 	    try {
 	    	etService.updateResetPasswordToken(token, email);
 	    	//Get this url and append the create token
-	    	String domain_url = request.getRequestURL().toString();
+	    	/*String domain_url = request.getRequestURL().toString();
 	    	domain_url = domain_url.replace(request.getServletPath(), "");
-	        String resetPasswordLink = "http://localhost:3000" + "/reset_password?token=" + token;
+	    	//getRequestURL - gets the entire url ex)http://localhost3000/api/...
+	    	//getServletPath - get servlet path ex) /api/...
+	    	System.out.println("getRequestURL: " + request.getRequestURL() + " servlet Path: " + request.getServletPath());
+	    	*/
+	    	//getHeader("referer") - gets source URL domain ex) http://localhost3000/
+	    	String domain_url = request.getHeader("referer");
+	        //String resetPasswordLink = domain_url + "/reset_password?token=" + token;
+	    	String resetPasswordLink = domain_url + "reset_password/" + token;
 	        sendEmail(email, resetPasswordLink);
-	        System.out.println(domain_url);
 	         
 	    } /*catch (CustomerNotFoundException ex) {
 	        model.addAttribute("error", ex.getMessage());
@@ -77,6 +80,10 @@ public class ResetPasswordController {
 	    return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
     }
      
+	/*
+	 * Prepares an email
+	 * Called by servlet
+	 * */
     public void sendEmail (String recipientEmail, String link)
 	{
     	System.out.println("Starting Email");
@@ -113,39 +120,33 @@ public class ResetPasswordController {
     }  
      
      /*
-      * When user clicks email link
+      * When user loads email link
       * */
-    @GetMapping("/reset_password")
-    public ResponseEntity<String> showResetPasswordForm(@Param(value = "token") String token) {
-    	User u = etService.getByResetPasswordToken(token);
+    @PostMapping("/validateToken")
+    public ResponseEntity<String> showResetPasswordForm(@RequestBody EmailToken token) {
+    	System.out.println("in reset pass, token: " + token.getToken());
+    	boolean isValidToken = etService.getByResetPasswordToken(token.getToken());
     	
-    	if(u == null)
+    	
+    	if(!isValidToken)
     	{
     		return new ResponseEntity<>("Not found", HttpStatus.BAD_REQUEST);
     	}
     	
     	//Return user id
-		return new ResponseEntity<>(token, HttpStatus.OK);
+		return new ResponseEntity<>("Token ACCEPTED", HttpStatus.OK);
     }
      
     /*
      * This will Reset the user's password
-     * Also, Validates the key to make sure it is a valide request
      *  */
     @PostMapping
-    public ResponseEntity<String> processResetPassword(@Param("token") String token, @RequestBody LinkedHashMap<String,String> pwd) 
+    public ResponseEntity<String> processResetPassword(@RequestBody LinkedHashMap<String,String> pwdForm) 
     {
-    	/*User u = etService.getByResetPasswordToken(token);
-    	
-    	if(u == null)
-    	{
-    		return new ResponseEntity<>("Not Valid", HttpStatus.BAD_REQUEST);
-    	}
-    	
-    	etService.updatePassword(u.getEmail(), pwd);*/
-    	
-    	System.out.println("Token: " + token);
-    	System.out.println("Password: " + pwd.get("password"));
+    	String pwd = pwdForm.get("newPassword");
+    	String token = pwdForm.get("token");
+    	System.out.println("In post. Token: " + token + " New password: " + pwd);
+    	etService.updatePassword(token, pwd);
     	
     	//Return user id
 		return new ResponseEntity<>("Updated", HttpStatus.OK);

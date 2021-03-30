@@ -46,37 +46,31 @@ public class EmailTokenService {
     }
 	
      /*
-      * Find a user based on token
+      * Checks if a token exists
       * */
-    public User getByResetPasswordToken(String token) 
+    public boolean getByResetPasswordToken(String token) 
     {
     	EmailToken et = etDao.findByToken(token);
     	
     	if(et != null)
     	{
-    		//Token exists, find user
-    		User u = uDao.findByEmail(et.getEmail());
-    		
-    		if(u != null)
-    		{
-    			return u;
-    		}
+    		return true;
     	}
     	
     	//THROW EXCEPTION
-        return null;
+        return false;
     }
      
     /*
      * Update the user's password
      * */
-    public void updatePassword(String email, String newPassword) 
+    public void updatePassword(String token, String newPassword) 
     {
-    	EmailToken et = etDao.findByEmail(email);
+    	EmailToken et = etDao.findByToken(token);
     	
     	if(et != null)
     	{
-    		//Token exists, find user
+    		//if Token exists, find user
     		User u = uDao.findByEmail(et.getEmail());
     		
     		//Update user and delete token
