@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -40,7 +41,7 @@ public class User
 	private String password;
 	
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
-	@JsonIgnore
+	@JsonIgnore		//Prevent infinite loop from json
 	private List<Post> posts = new ArrayList<>();
 	
 	//Constructors
@@ -48,6 +49,7 @@ public class User
 		super();
 	}
 	
+	@JsonCreator
 	public User(
 			@JsonProperty("firstname") String firstname, 
 			@JsonProperty("lastname") String lastname, 

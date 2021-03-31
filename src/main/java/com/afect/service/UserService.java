@@ -69,6 +69,12 @@ public class UserService
 		return userDao.findByEmail(email);
 	}
 	
+	//Ask query to get user with %firstname%
+	public List<User> getUsersByFirstname(String fn)
+	{
+		return userDao.findByFirstnameContainingIgnoreCase(fn);
+	}
+	
 	public void deleteUser(User u)
 	{
 		userDao.delete(u);

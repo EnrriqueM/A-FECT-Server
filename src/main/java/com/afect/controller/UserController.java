@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.afect.model.LoginForm;
@@ -118,6 +119,18 @@ public class UserController {
 		System.out.println(" user found! ");
 		//Return user id
 		return new ResponseEntity<>(u.getUser_id(), HttpStatus.OK);
+	}
+	
+	/*
+	 * GET user list by firstname*/
+	@GetMapping("/search")
+	public List<User> searchUsersByFirstname(@RequestParam(name="firstname") String fn)
+	{
+		System.out.println(fn);
+		List<User> userList = uService.getUsersByFirstname(fn);
+		
+		//Return user id
+		return userList;
 	}
 	
 	@GetMapping("/{username}")
