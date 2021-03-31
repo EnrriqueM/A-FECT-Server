@@ -1,5 +1,6 @@
 package com.afect.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -51,11 +52,22 @@ public class PostController
 		u.setPosts(usersPost);
 		
 		//Insert to DB
-		uService.insertUser(u);
+		//uService.insertUser(u);
 		pService.insertPost(p);
 		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
 	}
+	
+	@GetMapping("/allposts")
+	public ResponseEntity<List<Post>> getAllPosts(){
+		List<Post> pList = new ArrayList<Post>();
+		pList = pService.getAllPost();
+		if(pList.size()==0){
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(pList, HttpStatus.OK);
+		}
+	} 
 	
 	@GetMapping("/title/{title}")
 	public ResponseEntity<List<Post>> getPostByTitle(@PathVariable("title") String title)

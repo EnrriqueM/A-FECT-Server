@@ -1,5 +1,4 @@
 package com.afect.model;
-
 import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
@@ -16,9 +15,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name="af_Post")
-public class Post {
+public class Post{
 	@Id
 	@Column(name="post_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,7 +41,8 @@ public class Post {
 	@Column(name="dateUpdated")
 	@UpdateTimestamp
 	private LocalDateTime dateUpdated;
-
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
 	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	 private User user;
