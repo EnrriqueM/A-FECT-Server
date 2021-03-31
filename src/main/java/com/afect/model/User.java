@@ -1,11 +1,20 @@
 package com.afect.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name="af_User")
@@ -31,12 +40,24 @@ public class User
 	@Column(name="user_password", nullable=false)
 	private String password;
 	
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+	@JsonIgnore		//Prevent infinite loop from json
+	private List<Post> posts = new ArrayList<>();
+	
 	//Constructors
 	public User() {
 		super();
 	}
 	
-	public User(String firstname, String lastname, String username, String email, String password) {
+	@JsonCreator
+	public User(
+			@JsonProperty("firstname") String firstname, 
+			@JsonProperty("lastname") String lastname, 
+			@JsonProperty("username") String username, 
+			@JsonProperty("email") String email, 
+			@JsonProperty("password") String password
+			) 
+	{
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -45,14 +66,17 @@ public class User
 		this.password = password;
 	}
 	
-	public User(String username, String password, String email) {
+	public User(String firstname, String lastname, String username, String email, String password, List<Post> posts) {
 		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.posts = posts;
 	}
 	
-	public User(int user_id, String firstname, String lastname, String username, String email, String password) {
+	public User(int user_id, String firstname, String lastname, String username, String email, String password, List<Post> posts) {
 		super();
 		this.user_id = user_id;
 		this.firstname = firstname;
@@ -60,6 +84,7 @@ public class User
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.posts = posts;
 	}
 	
 	//Getters and Setters
@@ -100,8 +125,16 @@ public class User
 		this.password = password;
 	}
 	
-	//Override methods
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
 	
+	//Override methods
+
 	@Override
 	public String toString() {
 		return "User [user_id=" + user_id + ", firstname=" + firstname + ", lastname=" + lastname + ", username="

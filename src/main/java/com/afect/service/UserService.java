@@ -1,6 +1,7 @@
 package com.afect.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,14 +52,37 @@ public class UserService
 		return userDao.findByFirstname(name);
 	}
 	
+	public User getUserById(int id)
+	{
+		Optional<User> u = userDao.findById(id);
+		
+		return u.get();
+	}
+	
 	public User getUsernameAndPassword(String un, String pwd)
 	{
 		return userDao.findByUsernameAndPassword(un, pwd);
 	}
 	
+	public User getUserByEmail(String email)
+	{
+		return userDao.findByEmail(email);
+	}
+	
+	//Ask query to get user with %firstname%
+	public List<User> getUsersByFirstname(String fn)
+	{
+		return userDao.findByFirstnameContainingIgnoreCase(fn);
+	}
+	
 	public void deleteUser(User u)
 	{
 		userDao.delete(u);
+	}
+	
+	public void updateUser(User u)
+	{
+		userDao.save(u);
 	}
 	
 }
