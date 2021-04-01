@@ -123,11 +123,20 @@ public class UserController {
 	
 	/*
 	 * GET user list by firstname*/
-	@GetMapping("/search")
+	@GetMapping("/searchFirstnames")
 	public List<User> searchUsersByFirstname(@RequestParam(name="firstname") String fn)
 	{
 		System.out.println(fn);
 		List<User> userList = uService.getUsersByFirstname(fn);
+		
+		//Return user id
+		return userList;
+	}
+	
+	@GetMapping("/searchUsernames")
+	public List<User> searchUsersByUsernames(@RequestParam(name="username") String un)
+	{
+		List<User> userList = uService.getUsersByUsername(un);
 		
 		//Return user id
 		return userList;

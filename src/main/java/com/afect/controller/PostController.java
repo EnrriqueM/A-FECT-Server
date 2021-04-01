@@ -1,11 +1,13 @@
 package com.afect.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import com.afect.service.UserService;
 
 @RestController
 @RequestMapping(value="/api/post")
+@CrossOrigin(origins = "*")
 public class PostController 
 {
 	private PostService pService;
@@ -36,9 +39,11 @@ public class PostController
 		this.uService = uService;
 	}
 	
-	@PostMapping()
+	@PostMapping("/addpost")
 	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
+		System.out.println("in new post");
+		System.out.println(pMap);
 		User u = uService.getUserById(Integer.parseInt(pMap.get("userId")));
 		
 		Post p = new Post(pMap.get("title"), pMap.get("message"), null, u);
@@ -47,11 +52,22 @@ public class PostController
 		u.setPosts(usersPost);
 		
 		//Insert to DB
-		uService.insertUser(u);
+		//uService.insertUser(u);
 		pService.insertPost(p);
 		
 		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
 	}
+	
+	@GetMapping("/allposts")
+	public ResponseEntity<List<Post>> getAllPosts(){
+		List<Post> pList = new ArrayList<Post>();
+		pList = pService.getAllPost();
+		if(pList.size()==0){
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(pList, HttpStatus.OK);
+		}
+	} 
 	
 	@GetMapping("/title/{title}")
 	public ResponseEntity<List<Post>> getPostByTitle(@PathVariable("title") String title)
