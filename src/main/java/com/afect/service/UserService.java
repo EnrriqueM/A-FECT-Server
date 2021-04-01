@@ -75,6 +75,12 @@ public class UserService
 		return userDao.findByFirstnameContainingIgnoreCase(fn);
 	}
 	
+	//Ask query to get user with %firstname%
+	public List<User> getUsersByUsername(String un)
+	{
+		return userDao.findByUsernameContainingIgnoreCase(un);
+	}
+	
 	public void deleteUser(User u)
 	{
 		userDao.delete(u);
