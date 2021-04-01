@@ -1,5 +1,8 @@
 package com.afect.model;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,11 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -43,9 +48,14 @@ public class Post{
 	private LocalDateTime dateUpdated;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
-	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@JoinColumn(name="user_id")
+	@ManyToOne(fetch=FetchType.LAZY, optional = false)
+	@JoinColumn(name="user_id", nullable = false)
 	 private User user;
+	
+	//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+	@OneToMany(mappedBy="post", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Like> likes = new ArrayList<>();
 	
 	public Post() 
 	{
@@ -61,30 +71,31 @@ public class Post{
 		this.title = title;
 	}
 
-	public Post(String title, String message, byte[] image, LocalDateTime dateCreated, LocalDateTime dateUpdated, User user) 
-	{
-		super();
-		this.dateCreated = dateCreated;
-		this.dateUpdated = dateUpdated;
-		this.message = message;
-		this.image = image;
-		this.user = user;
-		this.title = title;
-	}
-
-	public Post(int post_id, String title, String message, byte[] image, 
-			LocalDateTime dateCreated, LocalDateTime dateUpdated, User user) 
-	{
+	public Post(int post_id, String title, String message, byte[] image, LocalDateTime dateCreated,
+			LocalDateTime dateUpdated, User user, List<Like> likes) {
 		super();
 		this.post_id = post_id;
-		this.dateCreated = dateCreated;
-		this.dateUpdated = dateUpdated;
+		this.title = title;
 		this.message = message;
 		this.image = image;
+		this.dateCreated = dateCreated;
+		this.dateUpdated = dateUpdated;
 		this.user = user;
-		this.title = title;
+		this.likes = likes;
 	}
 
+	public Post(String title, String message, byte[] image, LocalDateTime dateCreated, LocalDateTime dateUpdated,
+			User user, List<Like> likes) {
+		super();
+		this.title = title;
+		this.message = message;
+		this.image = image;
+		this.dateCreated = dateCreated;
+		this.dateUpdated = dateUpdated;
+		this.user = user;
+		this.likes = likes;
+	}
+	
 	public int getPost_id() {
 		return post_id;
 	}
@@ -93,20 +104,12 @@ public class Post{
 		this.post_id = post_id;
 	}
 
-	public LocalDateTime getDateCreated() {
-		return dateCreated;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setDateCreated(LocalDateTime dateCreated) {
-		this.dateCreated = dateCreated;
-	}
-
-	public LocalDateTime getDateUpdated() {
-		return dateUpdated;
-	}
-
-	public void setDateUpdated(LocalDateTime dateUpdated) {
-		this.dateUpdated = dateUpdated;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getMessage() {
@@ -125,6 +128,22 @@ public class Post{
 		this.image = image;
 	}
 
+	public LocalDateTime getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(LocalDateTime dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public LocalDateTime getDateUpdated() {
+		return dateUpdated;
+	}
+
+	public void setDateUpdated(LocalDateTime dateUpdated) {
+		this.dateUpdated = dateUpdated;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -133,19 +152,21 @@ public class Post{
 		this.user = user;
 	}
 
-	public String getTitle() {
-		return title;
+	public List<Like> getLikes() {
+		return likes;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setLikes(List<Like> likes) {
+		this.likes = likes;
 	}
 
 	@Override
 	public String toString() {
-		return "Post [post_id=" + post_id + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated
-				+ ", message=" + message  + ", user=" + user.getUsername() + "]";
+		return "Post [post_id=" + post_id + ", title=" + title + ", message=" + message + ", image="
+				+ Arrays.toString(image) + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + ", user="
+				+ user + ", likes=" + likes + "]";
 	}
+
 	
 	
 	
