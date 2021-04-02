@@ -40,7 +40,7 @@ public class PostController
 	}
 	
 	@PostMapping("/addpost")
-	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
+	public ResponseEntity<List<Post>> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
 		System.out.println("in new post");
 		System.out.println(pMap);
@@ -55,7 +55,7 @@ public class PostController
 		//uService.insertUser(u);
 		pService.insertPost(p);
 		
-		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
+		return new ResponseEntity<List<Post>>(usersPost, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/allposts")
