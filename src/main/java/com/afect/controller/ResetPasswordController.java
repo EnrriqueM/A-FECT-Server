@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,11 @@ public class ResetPasswordController {
 
 	private EmailTokenService etService;
     private JavaMailSender mailSender;
+    private static final Logger LOGGER = Logger.getLogger(ResetPasswordController.class);
 
 	public ResetPasswordController() {
 		super();
+		LOGGER.info("Init Post Controller");
 	}
 
 	@Autowired
@@ -41,6 +44,7 @@ public class ResetPasswordController {
 		super();
 		this.etService = etService;
 		this.mailSender = mailSender;
+		LOGGER.info("Auto Init Post Controller");
 	}
 	
 	/*
@@ -65,6 +69,7 @@ public class ResetPasswordController {
 	    	String domain_url = request.getHeader("referer");
 	        //String resetPasswordLink = domain_url + "/reset_password?token=" + token;
 	    	String resetPasswordLink = domain_url + "reset_password/" + token;
+	    	LOGGER.info("User with email: " + email + " requested to update password. Token: " + token);
 	        sendEmail(email, resetPasswordLink);
 	         
 	    } /*catch (CustomerNotFoundException ex) {
@@ -75,6 +80,7 @@ public class ResetPasswordController {
 	    catch(Exception err)
 	    {
 	    	err.printStackTrace();
+	    	LOGGER.error(err.getMessage());
 	    }
 	         
 	    return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
@@ -97,7 +103,7 @@ public class ResetPasswordController {
 			
 			String subject = "Here's the link to reset your password";
 	         
-	        String content = "<p>Hello,</p>"
+	        String content = "<h3>Hello,</h3>"
 	                + "<p>You have requested to reset your password.</p>"
 	                + "<p>Click the link below to change your password:</p>"
 	                + "<p><a href=\"" + link + "\">Change my password</a></p>"
@@ -116,6 +122,7 @@ public class ResetPasswordController {
         catch (UnsupportedEncodingException | MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
     }  
      
@@ -130,6 +137,7 @@ public class ResetPasswordController {
     	
     	if(!isValidToken)
     	{
+    		LOGGER.warn("recevied invalid token of " + token.getToken());
     		return new ResponseEntity<>("Not found", HttpStatus.BAD_REQUEST);
     	}
     	
@@ -145,8 +153,9 @@ public class ResetPasswordController {
     {
     	String pwd = pwdForm.get("newPassword");
     	String token = pwdForm.get("token");
-    	System.out.println("In post. Token: " + token + " New password: " + pwd);
     	etService.updatePassword(token, pwd);
+    	
+    	LOGGER.info("Attempt to update user password of token " + token);
     	
     	//Return user id
 		return new ResponseEntity<>("Updated", HttpStatus.OK);
