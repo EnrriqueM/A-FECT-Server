@@ -16,11 +16,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name="af_comments")
 public class Comment {
 	@Id
-	@Column(name="commen_id")
+	@Column(name="comment_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int commen_id;
+	private int comment_id;
 	
-	@Column(name="comment")
+	@Column(name="comment", nullable = false)
 	private String comment;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -37,9 +37,9 @@ public class Comment {
 		super();
 	}
 
-	public Comment(int commen_id, String comment, Post post, User user) {
+	public Comment(int comment_id, String comment, Post post, User user) {
 		super();
-		this.commen_id = commen_id;
+		this.comment_id = comment_id;
 		this.comment = comment;
 		this.post = post;
 		this.user = user;
@@ -52,12 +52,12 @@ public class Comment {
 		this.user = user;
 	}
 
-	public int getCommen_id() {
-		return commen_id;
+	public int getComment_id() {
+		return comment_id;
 	}
 
-	public void setCommen_id(int commen_id) {
-		this.commen_id = commen_id;
+	public void setComment_id(int comment_id) {
+		this.comment_id = comment_id;
 	}
 
 	public String getComment() {
@@ -85,4 +85,5 @@ public class Comment {
 	}
 	
 	
+
 }
