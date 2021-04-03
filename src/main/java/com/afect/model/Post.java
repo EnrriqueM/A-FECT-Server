@@ -1,7 +1,6 @@
 package com.afect.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -162,9 +161,8 @@ public class Post{
 
 	@Override
 	public String toString() {
-		return "Post [post_id=" + post_id + ", title=" + title + ", message=" + message + ", image="
-				+ Arrays.toString(image) + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + ", user="
-				+ user + ", likes=" + likes + "]";
+		return "Post [post_id=" + post_id + ", title=" + title + ", message=" + message + 
+				", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated  + "]";
 	}
 
 	

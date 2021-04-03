@@ -51,6 +51,11 @@ public class PostService
 		return pDao.findByTitle(title);
 	}
 	
+	public List<Post> getByPostsWithLikeTitle(String title)
+	{
+		return pDao.findByTitleContainingIgnoreCase(title);
+	}
+	
 	public Post getById(int id)
 	{
 		Post p = pDao.findById(id);

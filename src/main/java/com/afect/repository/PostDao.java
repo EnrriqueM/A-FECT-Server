@@ -13,4 +13,5 @@ public interface PostDao extends JpaRepository<Post, Integer>
 	public List<Post> findByUser(User u);
 	public List<Post> findByTitle(String title);
 	public Post findById(int id);
+	public List<Post> findByTitleContainingIgnoreCase(String title);
 }
