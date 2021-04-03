@@ -29,8 +29,11 @@ public class LikeService {
 	}
 	
 	public int checkIfUserLiked(int pid, int uid) {
-		int like = likeDao.checkLike(pid, uid);
-		return like;
+		if(likeDao.checkLike(pid, uid) != null) {
+			return likeDao.checkLike(pid, uid).getLike_id();
+		} else {
+			return 0;
+		}
 	}
 	
 	public void deleteLike(int id) {

@@ -43,13 +43,13 @@ public class LikeController {
 	}
 	
 	@PostMapping("/addlike")
-	public ResponseEntity<String> insertLike(@RequestBody LinkedHashMap<String, String> likeMap)
+	public ResponseEntity<Integer> insertLike(@RequestBody LinkedHashMap<String, String> likeMap)
 	{
 		int postId = Integer.parseInt(likeMap.get("postId"));
 		int userId = Integer.parseInt(likeMap.get("userId"));
 		int count = likeService.checkIfUserLiked(postId, userId);
 		if(count != 0) {
-			return new ResponseEntity<String>("Already Liked", HttpStatus.CREATED);
+			return new ResponseEntity<Integer>(0, HttpStatus.CREATED);
 		} else {
 			Post p = pService.getById(postId);
 			User u = uService.getUserById(userId);
@@ -62,7 +62,9 @@ public class LikeController {
 			
 			//Insert to DB
 			likeService.addLike(like);
-			return new ResponseEntity<String>("Like Added", HttpStatus.CREATED);
+			
+			int likeId = likeService.checkIfUserLiked(postId, userId);
+			return new ResponseEntity<Integer>(likeId, HttpStatus.CREATED);
 		}
 	}
 	
@@ -76,6 +78,12 @@ public class LikeController {
 			return new ResponseEntity<>(count, HttpStatus.OK);
 		}
 		
+	}
+	
+	@GetMapping("/checkLike/{postId}/{userId}")
+	public ResponseEntity<Integer> checkLikeByPostAndUser(@PathVariable("postId")Integer postId, @PathVariable("userId")Integer userId){
+		int likeId = likeService.checkIfUserLiked(postId, userId);
+		return new ResponseEntity<Integer>(likeId, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{likeId}")

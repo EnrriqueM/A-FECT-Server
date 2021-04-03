@@ -49,7 +49,7 @@ public class PostController
 	 * Called when user clicks add post
 	 * */
 	@PostMapping("/addpost")
-	public ResponseEntity<String> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
+	public ResponseEntity<List<Post>> insertPost(@RequestBody LinkedHashMap<String, String> pMap)
 	{
 		System.out.println("in new post");
 		System.out.println(pMap);
@@ -65,7 +65,7 @@ public class PostController
 		pService.insertPost(p);
 		
 		LOGGER.info("New Post created " + p);
-		return new ResponseEntity<String>("Resource was created", HttpStatus.CREATED);
+		return new ResponseEntity<List<Post>>(usersPost, HttpStatus.CREATED);
 	}
 	
 	/*

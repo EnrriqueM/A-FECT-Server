@@ -56,22 +56,16 @@ public class Post{
 	@JsonIgnore
 	private List<Like> likes = new ArrayList<>();
 	
-	public Post() 
-	{
+	@OneToMany(mappedBy="post", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Comment> comments = new ArrayList<>();
+
+	public Post() {
 		super();
-	}
-	
-	public Post(String title, String message, byte[] image, User user) 
-	{
-		super();
-		this.message = message;
-		this.image = image;
-		this.user = user;
-		this.title = title;
 	}
 
 	public Post(int post_id, String title, String message, byte[] image, LocalDateTime dateCreated,
-			LocalDateTime dateUpdated, User user, List<Like> likes) {
+			LocalDateTime dateUpdated, User user, List<Like> likes, List<Comment> comments) {
 		super();
 		this.post_id = post_id;
 		this.title = title;
@@ -81,20 +75,17 @@ public class Post{
 		this.dateUpdated = dateUpdated;
 		this.user = user;
 		this.likes = likes;
+		this.comments = comments;
 	}
 
-	public Post(String title, String message, byte[] image, LocalDateTime dateCreated, LocalDateTime dateUpdated,
-			User user, List<Like> likes) {
+	public Post(String title, String message, byte[] image, User user) {
 		super();
 		this.title = title;
 		this.message = message;
 		this.image = image;
-		this.dateCreated = dateCreated;
-		this.dateUpdated = dateUpdated;
 		this.user = user;
-		this.likes = likes;
 	}
-	
+
 	public int getPost_id() {
 		return post_id;
 	}
@@ -159,13 +150,20 @@ public class Post{
 		this.likes = likes;
 	}
 
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+	
 	@Override
-	public String toString() {
+	public String toString() 
+	{
 		return "Post [post_id=" + post_id + ", title=" + title + ", message=" + message + 
 				", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated  + "]";
 	}
-
-	
 	
 	
 }

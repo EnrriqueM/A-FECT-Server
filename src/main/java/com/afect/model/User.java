@@ -49,6 +49,10 @@ public class User
 	@JsonIgnore
 	private List<Like> likes = new ArrayList<>();
 	
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Comment> comments = new ArrayList<>();
+	
 	//Constructors
 	public User() {
 		super();
@@ -72,7 +76,7 @@ public class User
 	}
 
 	public User(int user_id, String firstname, String lastname, String username, String email, String password,
-			List<Post> posts, List<Like> likes) {
+			List<Post> posts, List<Like> likes, List<Comment> comments) {
 		super();
 		this.user_id = user_id;
 		this.firstname = firstname;
@@ -82,10 +86,11 @@ public class User
 		this.password = password;
 		this.posts = posts;
 		this.likes = likes;
+		this.comments = comments;
 	}
 
 	public User(String firstname, String lastname, String username, String email, String password, List<Post> posts,
-			List<Like> likes) {
+			List<Like> likes, List<Comment> comments) {
 		super();
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -94,10 +99,9 @@ public class User
 		this.password = password;
 		this.posts = posts;
 		this.likes = likes;
+		this.comments = comments;
 	}
 
-	
-	
 	public int getUser_id() {
 		return user_id;
 	}
@@ -162,11 +166,21 @@ public class User
 		this.likes = likes;
 	}
 
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
 	@Override
-	public String toString() {
+	public String toString()
+	 {
 		return "User [user_id=" + user_id + ", firstname=" + firstname + ", lastname=" + lastname + ", username="
 				+ username + ", email=" + email + ", password=" + password + "]";
 	}
+
 	
 	
 }
